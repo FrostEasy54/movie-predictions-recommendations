@@ -121,15 +121,19 @@ def recommend(liked_titles: list[str], n_recs: int = 5) -> list[str]:
         return []
 
     neigh_idxs = neighbors.kneighbors(X[idxs], return_distance=False)
+
     recs = []
+    recs_set = set()
+
     for nbrs in neigh_idxs:
         for i in nbrs[1:]:
             title = df.loc[i, "Series_Title"]
-            if title in liked_set:
-                continue
-            recs.append(title)
-            if len(recs) >= n_recs:
-                return recs
+            if title not in liked_set and title not in recs_set:
+                recs.append(title)
+                recs_set.add(title)
+
+                if len(recs) >= n_recs:
+                    return recs
     return recs
 
 
